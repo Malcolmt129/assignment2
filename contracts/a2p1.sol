@@ -10,6 +10,7 @@ contract a2p1 {
         EnrollmentType courseType;
         bool gradsCanEnroll;
         bool exists;
+        uint256 numOfStudents;
     }
 
     struct Registered {
@@ -27,15 +28,17 @@ contract a2p1 {
     }
 
     mapping (uint256 => Course) public catalogue;
+    uint256[] public courses;
 
     constructor() {
         owner = msg.sender;
     }
 
-    function add (uint256 courseNumber, EnrollmentType courseType) public view {
+    function add (uint256 courseNumber, EnrollmentType courseType) public {
         require(msg.sender ==  owner, "Not authorized to make this transaction");
-        require(catalogue[courseNumber].exists, "Class already exists!");
+        require(!(catalogue[courseNumber].exists), "Class already exists!");
         
+        courses.push(courseNumber);
         Course memory class = catalogue[courseNumber];
 
         class.number = courseNumber;
@@ -49,7 +52,16 @@ contract a2p1 {
         }
         
         class.exists = true;
+        class.numOfStudents = 0;
     }
 
+    //function register(uint256 credits, EnrollmentType studentType, uint256 course){}
 
+    
+    function showCatalogue() public{
+        emit printCatalogue(courses); 
+    }
+
+    event printCatalogue(uint256[] courses);
+    
 }
